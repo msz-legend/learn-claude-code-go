@@ -20,7 +20,7 @@
 
 ## 代码地图
 
-| File | Role |
+| 文件 | 作用 |
 |---|---|
 | `s15_integrated_harness/main.go` | 本章入口：把这个机制接进同一个循环。 |
 | `internal/harness/loop.go`, `internal/harness/todo.go`, `internal/harness/skills.go`, `internal/harness/memory.go`, `internal/harness/tasks.go`, `internal/harness/background.go`, `internal/harness/cron.go`, `internal/harness/context.go`, `internal/harness/agents.go` | 每章共用的实现。 |

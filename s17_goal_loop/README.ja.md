@@ -20,7 +20,7 @@
 
 ## コードマップ
 
-| File | Role |
+| ファイル | 役割 |
 |---|---|
 | `s17_goal_loop/main.go` | 本章の入口。この仕組みを1つのループに接続する。 |
 | `internal/harness/goal.go`, `internal/harness/stopgate.go`, `internal/harness/loop.go` | 全章で共有する実装。 |

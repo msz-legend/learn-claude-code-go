@@ -20,7 +20,7 @@
 
 ## コードマップ
 
-| File | Role |
+| ファイル | 役割 |
 |---|---|
 | `s15_integrated_harness/main.go` | 本章の入口。この仕組みを1つのループに接続する。 |
 | `internal/harness/loop.go`, `internal/harness/todo.go`, `internal/harness/skills.go`, `internal/harness/memory.go`, `internal/harness/tasks.go`, `internal/harness/background.go`, `internal/harness/cron.go`, `internal/harness/context.go`, `internal/harness/agents.go` | 全章で共有する実装。 |

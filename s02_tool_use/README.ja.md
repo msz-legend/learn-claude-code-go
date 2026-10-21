@@ -20,7 +20,7 @@
 
 ## コードマップ
 
-| File | Role |
+| ファイル | 役割 |
 |---|---|
 | `s02_tool_use/main.go` | 本章の入口。この仕組みを1つのループに接続する。 |
 | `internal/harness/tools.go`, `internal/harness/tool.go`, `internal/harness/workspace.go` | 全章で共有する実装。 |

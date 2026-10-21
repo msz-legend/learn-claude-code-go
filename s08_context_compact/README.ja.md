@@ -20,7 +20,7 @@
 
 ## コードマップ
 
-| File | Role |
+| ファイル | 役割 |
 |---|---|
 | `s08_context_compact/main.go` | 本章の入口。この仕組みを1つのループに接続する。 |
 | `internal/harness/context.go`, `internal/harness/compactor.go` | 全章で共有する実装。 |

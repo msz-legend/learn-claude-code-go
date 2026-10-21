@@ -20,7 +20,7 @@
 
 ## コードマップ
 
-| File | Role |
+| ファイル | 役割 |
 |---|---|
 | `s05_todo_write/main.go` | 本章の入口。この仕組みを1つのループに接続する。 |
 | `internal/harness/todo.go`, `internal/harness/hooks.go` | 全章で共有する実装。 |

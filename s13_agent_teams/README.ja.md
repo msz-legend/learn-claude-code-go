@@ -20,7 +20,7 @@
 
 ## コードマップ
 
-| File | Role |
+| ファイル | 役割 |
 |---|---|
 | `s13_agent_teams/main.go` | 本章の入口。この仕組みを1つのループに接続する。 |
 | `internal/harness/team.go`, `internal/harness/tasks.go` | 全章で共有する実装。 |

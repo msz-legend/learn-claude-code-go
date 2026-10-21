@@ -20,7 +20,7 @@
 
 ## 代码地图
 
-| File | Role |
+| 文件 | 作用 |
 |---|---|
 | `s01_agent_loop/main.go` | 本章入口：把这个机制接进同一个循环。 |
 | `internal/harness/loop.go`, `internal/harness/cli.go`, `internal/harness/workspace.go` | 每章共用的实现。 |

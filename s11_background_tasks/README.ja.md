@@ -20,7 +20,7 @@
 
 ## コードマップ
 
-| File | Role |
+| ファイル | 役割 |
 |---|---|
 | `s11_background_tasks/main.go` | 本章の入口。この仕組みを1つのループに接続する。 |
 | `internal/harness/background.go` | 全章で共有する実装。 |

@@ -20,7 +20,7 @@
 
 ## 代码地图
 
-| File | Role |
+| 文件 | 作用 |
 |---|---|
 | `s05_todo_write/main.go` | 本章入口：把这个机制接进同一个循环。 |
 | `internal/harness/todo.go`, `internal/harness/hooks.go` | 每章共用的实现。 |

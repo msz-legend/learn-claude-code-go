@@ -20,7 +20,7 @@
 
 ## 代码地图
 
-| File | Role |
+| 文件 | 作用 |
 |---|---|
 | `s02_tool_use/main.go` | 本章入口：把这个机制接进同一个循环。 |
 | `internal/harness/tools.go`, `internal/harness/tool.go`, `internal/harness/workspace.go` | 每章共用的实现。 |

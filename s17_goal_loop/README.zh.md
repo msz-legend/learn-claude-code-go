@@ -20,7 +20,7 @@
 
 ## 代码地图
 
-| File | Role |
+| 文件 | 作用 |
 |---|---|
 | `s17_goal_loop/main.go` | 本章入口：把这个机制接进同一个循环。 |
 | `internal/harness/goal.go`, `internal/harness/stopgate.go`, `internal/harness/loop.go` | 每章共用的实现。 |
