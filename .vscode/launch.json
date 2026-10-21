@@ -1,0 +1,166 @@
+{
+    // One launch target per chapter, plus the s14 demo MCP server and the
+    // offline harness tests.
+    //
+    // Chapters are stdin REPLs and read ANTHROPIC_API_KEY / OPENAI_API_KEY and
+    // friends from .env (see .env.example). Copy .env.example to .env first,
+    // then press F5. "integratedTerminal" is what makes stdin work while
+    // debugging; the default debug console is read-only.
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "s01: Agent Loop",
+            "type": "go",
+            "request": "launch",
+            "program": "${workspaceFolder}/s01_agent_loop",
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "s02: Tool Use",
+            "type": "go",
+            "request": "launch",
+            "program": "${workspaceFolder}/s02_tool_use",
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "s03: Permission System",
+            "type": "go",
+            "request": "launch",
+            "program": "${workspaceFolder}/s03_permission",
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "s04: Hook System",
+            "type": "go",
+            "request": "launch",
+            "program": "${workspaceFolder}/s04_hooks",
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "s05: TodoWrite",
+            "type": "go",
+            "request": "launch",
+            "program": "${workspaceFolder}/s05_todo_write",
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "s06: Subagent",
+            "type": "go",
+            "request": "launch",
+            "program": "${workspaceFolder}/s06_subagent",
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "s07: Skill Loading",
+            "type": "go",
+            "request": "launch",
+            "program": "${workspaceFolder}/s07_skill_loading",
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "s08: Context Compact",
+            "type": "go",
+            "request": "launch",
+            "program": "${workspaceFolder}/s08_context_compact",
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "s09: Memory System",
+            "type": "go",
+            "request": "launch",
+            "program": "${workspaceFolder}/s09_memory",
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "s10: Task System",
+            "type": "go",
+            "request": "launch",
+            "program": "${workspaceFolder}/s10_task_system",
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "s11: Background Tasks",
+            "type": "go",
+            "request": "launch",
+            "program": "${workspaceFolder}/s11_background_tasks",
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "s12: Cron Scheduler",
+            "type": "go",
+            "request": "launch",
+            "program": "${workspaceFolder}/s12_cron_scheduler",
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "s13: Agent Teams",
+            "type": "go",
+            "request": "launch",
+            "program": "${workspaceFolder}/s13_agent_teams",
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "s14: MCP Plugin",
+            "type": "go",
+            "request": "launch",
+            "program": "${workspaceFolder}/s14_mcp_plugin",
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "s14: MCP Demo Server (manual, stdin=JSON-RPC)",
+            "type": "go",
+            "request": "launch",
+            "program": "${workspaceFolder}/s14_mcp_plugin/demo",
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "s15: Integrated Harness",
+            "type": "go",
+            "request": "launch",
+            "program": "${workspaceFolder}/s15_integrated_harness",
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "s16: Workflow Runtime",
+            "type": "go",
+            "request": "launch",
+            "program": "${workspaceFolder}/s16_workflow_runtime",
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            // Optional: pass a run id here to resume a journaled run.
+            "args": []
+        },
+        {
+            "name": "s17: Goal Loop",
+            "type": "go",
+            "request": "launch",
+            "program": "${workspaceFolder}/s17_goal_loop",
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "Tests: internal/harness",
+            "type": "go",
+            "request": "launch",
+            "mode": "test",
+            "program": "${workspaceFolder}/internal/harness",
+            "cwd": "${workspaceFolder}"
+        }
+    ]
+}
