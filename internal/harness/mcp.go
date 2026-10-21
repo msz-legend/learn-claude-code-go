@@ -150,19 +150,24 @@ func (c *McpClient) Register(registry *Registry, serverName string) (int, error)
 
 func (c *McpClient) Alive() bool { return c.cmd.ProcessState == nil }
 
+// Close stops the server process (and its children) and reaps it so that
+// ProcessState reflects the exit.
 func (c *McpClient) Close() error {
 	_ = c.stdin.Close()
 	if c.cmd.Process != nil {
-		return c.cmd.Process.Kill()
+		killTree(c.cmd)
 	}
+	_ = c.cmd.Wait()
 	return nil
 }
 
+// request is serialized so two concurrent callers cannot consume each other's
+// responses through the shared reader channel.
 func (c *McpClient) request(method string, params map[string]any) (map[string]any, error) {
 	c.mu.Lock()
+	defer c.mu.Unlock()
 	c.ids++
 	id := c.ids
-	c.mu.Unlock()
 	request := Obj("jsonrpc", "2.0", "id", id, "method", method, "params", params)
 	if _, err := c.stdin.Write([]byte(Stringify(request) + "\n")); err != nil {
 		return nil, err
@@ -179,6 +184,7 @@ func (c *McpClient) request(method string, params map[string]any) (map[string]an
 				continue
 			}
 			if Int(response, "id", -1) != id {
+				// Notification or a stale response; keep waiting for ours.
 				continue
 			}
 			if errValue, ok := response["error"]; ok {

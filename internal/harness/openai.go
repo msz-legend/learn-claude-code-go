@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"strings"
 )
 
 // OpenAIClient speaks the OpenAI chat-completions shape used by OpenAI,
@@ -129,13 +130,12 @@ func encodeOpenAIMessages(messages []Msg) []any {
 				}
 			}
 			if len(results) > 0 {
+				if text := message.Text(); strings.TrimSpace(text) != "" {
+					out = append(out, Obj("role", "user", "content", text))
+				}
 				for _, block := range results {
-					content := block.Content
-					if block.IsError {
-						content = "Error: " + content
-					}
 					out = append(out, Obj(
-						"role", "tool", "tool_call_id", block.ToolUseID, "content", content))
+						"role", "tool", "tool_call_id", block.ToolUseID, "content", block.Content))
 				}
 				continue
 			}

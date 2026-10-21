@@ -56,7 +56,7 @@ func (b *Background) Start(command string) string {
 			status = "failed"
 		}
 		if len(output) > 30_000 {
-			output = output[:30_000] + "\n... (truncated)"
+			output = Truncate(output, 30_000) + "\n... (truncated)"
 		}
 		b.mu.Lock()
 		job := b.jobs[id]

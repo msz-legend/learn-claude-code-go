@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"unicode/utf8"
 )
 
 const (
@@ -102,5 +103,17 @@ func Shorten(text string, max int) string {
 	if len(text) <= max {
 		return text
 	}
-	return text[:max] + "..."
+	return Truncate(text, max) + "..."
+}
+
+// Truncate cuts text to at most max bytes without splitting a UTF-8 rune.
+func Truncate(text string, max int) string {
+	if len(text) <= max {
+		return text
+	}
+	cut := max
+	for cut > 0 && !utf8.RuneStart(text[cut]) {
+		cut--
+	}
+	return text[:cut]
 }

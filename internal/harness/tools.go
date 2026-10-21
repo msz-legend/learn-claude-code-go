@@ -47,7 +47,7 @@ func BashTool(workspace *Workspace, timeoutSeconds int) Tool {
 				output = "(no output)"
 			}
 			if len(output) > 50_000 {
-				output = output[:50_000] + "\n... (output truncated)"
+				output = Truncate(output, 50_000) + "\n... (output truncated)"
 			}
 			if result.ExitCode != 0 {
 				output += "\n[exit code: " + itoa(result.ExitCode) + "]"

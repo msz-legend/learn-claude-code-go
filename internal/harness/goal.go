@@ -7,10 +7,10 @@ import (
 
 // Goal is an independent evaluator at the loop's stop boundary.
 type Goal struct {
-	goal          string
-	client        Client
+	goal           string
+	client         Client
 	maxEvaluations int
-	evaluations   int
+	evaluations    int
 }
 
 func NewGoal(goal string, client Client) *Goal {
@@ -21,8 +21,8 @@ func NewGoal(goal string, client Client) *Goal {
 	}
 }
 
-func (g *Goal) Text() string        { return g.goal }
-func (g *Goal) Evaluations() int    { return g.evaluations }
+func (g *Goal) Text() string     { return g.goal }
+func (g *Goal) Evaluations() int { return g.evaluations }
 func (g *Goal) StatusLine() string {
 	return fmt.Sprintf("goal=%s evaluations=%d/%d", g.goal, g.evaluations, g.maxEvaluations)
 }

@@ -18,7 +18,7 @@ type Decision struct {
 	Reason string
 }
 
-func Allow() Decision            { return Decision{Mode: PermAllow} }
+func Allow() Decision             { return Decision{Mode: PermAllow} }
 func Deny(reason string) Decision { return Decision{Mode: PermDeny, Reason: reason} }
 func Ask(reason string) Decision  { return Decision{Mode: PermAsk, Reason: reason} }
 

@@ -109,9 +109,9 @@ func (l *AgentLoop) MaxTurns(turns int) *AgentLoop {
 	return l
 }
 func (l *AgentLoop) System(system string) *AgentLoop { l.system = system; return l }
-func (l *AgentLoop) Client() Client                 { return l.client }
-func (l *AgentLoop) Tools() *Registry               { return l.tools }
-func (l *AgentLoop) LastStatus() string             { return l.lastStatus }
+func (l *AgentLoop) Client() Client                  { return l.client }
+func (l *AgentLoop) Tools() *Registry                { return l.tools }
+func (l *AgentLoop) LastStatus() string              { return l.lastStatus }
 
 func (l *AgentLoop) Run(history *[]Msg) (string, error) {
 	l.lastStatus = "working"
@@ -207,11 +207,15 @@ func (l *AgentLoop) Run(history *[]Msg) (string, error) {
 				}
 			}
 			if blocked == "" {
-				var err error
-				blocked, err = l.hooks.BeforeTool(call)
-				if err != nil {
-					return "", err
+				reason, hookErr := l.hooks.BeforeTool(call)
+				if hookErr != nil {
+					// Record a tool_result anyway so the assistant's tool_use
+					// block is always answered and history stays valid.
+					results = append(results, ToolResultBlock(call.ID, "Error: pre-tool hook failed: "+hookErr.Error(), true))
+					l.listener.toolBlocked(call, "pre-tool hook failed")
+					continue
 				}
+				blocked = reason
 			}
 			if blocked != "" {
 				results = append(results, ToolResultBlock(call.ID, "Error: "+blocked, true))
@@ -220,9 +224,13 @@ func (l *AgentLoop) Run(history *[]Msg) (string, error) {
 			}
 
 			result := l.tools.Execute(call)
-			output, err := l.hooks.AfterTool(call, result.Output)
-			if err != nil {
-				return "", err
+			output, hookErr := l.hooks.AfterTool(call, result.Output)
+			if hookErr != nil {
+				// The tool already ran; report both its output and the hook failure.
+				output += "\nError: post-tool hook failed: " + hookErr.Error()
+				results = append(results, ToolResultBlock(call.ID, output, true))
+				l.listener.toolResult(call, output, true)
+				continue
 			}
 			results = append(results, ToolResultBlock(call.ID, output, result.Error))
 			l.listener.toolResult(call, output, result.Error)

@@ -5,6 +5,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"unicode/utf8"
 )
 
 // ContextCompactor implements four layers of context control, cheapest first.
@@ -87,7 +88,7 @@ func Transcript(history []Msg, maxChars int) string {
 	}
 	text := out.String()
 	if len(text) > maxChars {
-		text = text[:maxChars] + "\n... (transcript truncated)"
+		text = Truncate(text, maxChars) + "\n... (transcript truncated)"
 	}
 	return text
 }
@@ -216,5 +217,9 @@ func headTail(text string, head, tail int) string {
 	if len(text) <= head+tail+40 {
 		return text
 	}
-	return text[:head] + fmt.Sprintf("\n... (%d chars omitted) ...\n", len(text)-head-tail) + text[len(text)-tail:]
+	tailStart := len(text) - tail
+	for tailStart < len(text) && !utf8.RuneStart(text[tailStart]) {
+		tailStart++
+	}
+	return Truncate(text, head) + fmt.Sprintf("\n... (%d chars omitted) ...\n", len(text)-head-tail) + text[tailStart:]
 }

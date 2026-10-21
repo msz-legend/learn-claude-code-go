@@ -1,6 +1,7 @@
 package harness
 
 import (
+	"errors"
 	"os"
 	"path/filepath"
 	"strings"
@@ -193,6 +194,95 @@ func TestWorkflowResume(t *testing.T) {
 		}
 	}
 	_ = os.Remove(filepath.Join(dir, ".workflows"))
+}
+
+// stubClient answers with one recorded tool call, then a final text.
+type stubClient struct {
+	calls int
+	name  string
+}
+
+func (c *stubClient) Complete(_ string, _ []Msg, _ []ToolSpec) (LlmResponse, error) {
+	c.calls++
+	if c.calls == 1 {
+		return LlmResponse{Blocks: []Block{
+			ToolUseBlock("stub_call_1", c.name, map[string]any{}),
+		}, StopReason: "tool_use"}, nil
+	}
+	return LlmResponse{Blocks: []Block{TextBlock("stub final")}, StopReason: "end_turn"}, nil
+}
+
+func (c *stubClient) Model() string { return "stub" }
+
+func TestHookErrorKeepsHistoryValid(t *testing.T) {
+	broken := &Hooks{PreToolUse: func(Block) (string, error) {
+		return "", errors.New("hook exploded")
+	}}
+	tools := NewRegistry().Register(Tool{Name: "stub", Handler: func(map[string]any) (string, error) {
+		return "ran", nil
+	}})
+	loop := NewAgentLoop(&stubClient{name: "stub"}, tools, "system").Hooks(broken)
+	history := []Msg{User("go")}
+	if _, err := loop.Run(&history); err != nil {
+		t.Fatalf("Run returned error: %v", err)
+	}
+	last := history[len(history)-1]
+	if last.Role != "assistant" || strings.TrimSpace(last.Text()) != "stub final" {
+		t.Fatalf("unexpected final message: %+v", last)
+	}
+	errorResults := 0
+	for _, message := range history {
+		if message.Role != "user" {
+			continue
+		}
+		for _, block := range message.Blocks {
+			if block.Type == BlockToolResult && block.IsError &&
+				strings.Contains(block.Content, "hook exploded") {
+				errorResults++
+			}
+		}
+	}
+	if errorResults != 1 {
+		t.Fatalf("expected exactly one hook-failure tool_result, got %d", errorResults)
+	}
+}
+
+func TestWorkflowPreviousFeedsResumedStep(t *testing.T) {
+	dir := filepath.Join(t.TempDir(), ".workflows")
+	if err := os.MkdirAll(filepath.Join(dir, "partial"), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	journal := `{"step":"one","type":"step","status":"complete","output":"first output","ms":1,"at":"2025-01-01T00:00:00Z"}` + "\n"
+	if err := os.WriteFile(filepath.Join(dir, "partial", "journal.jsonl"), []byte(journal), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	registry := NewWorkflowRegistry(filepath.Dir(dir), func(string) (string, error) {
+		return "fresh", nil
+	})
+	registry.Register(WorkflowMeta{Name: "review", Description: "test"}, []WorkflowStep{
+		{Name: "one", Body: func(*WorkflowContext) (string, error) { return "never", nil }},
+		{Name: "two", Body: func(ctx *WorkflowContext) (string, error) {
+			return "report over " + ctx.Previous("one"), nil
+		}},
+	})
+	result, err := registry.Run("review", "partial")
+	if err != nil {
+		t.Fatal(err)
+	}
+	cached, fresh := 0, 0
+	for _, step := range result.Steps {
+		if step.Cached {
+			cached++
+		} else {
+			fresh++
+		}
+	}
+	if cached != 1 || fresh != 1 {
+		t.Fatalf("cached=%d fresh=%d", cached, fresh)
+	}
+	if result.Output["two"] != "report over first output" {
+		t.Fatalf("two = %q", result.Output["two"])
+	}
 }
 
 func parseTestTime(t *testing.T, value string) time.Time {

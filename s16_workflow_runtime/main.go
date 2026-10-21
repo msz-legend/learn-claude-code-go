@@ -76,6 +76,17 @@ command, and the three most important files. Keep it under 400 words.`)
 		}},
 		{Name: "report", Body: func(ctx *harness.WorkflowContext) (string, error) {
 			ctx.Phase("Report")
+			// On a resumed run, earlier steps may be journal-cached transactions
+			// rather than fresh executions: prefer the fresh value, fall back to
+			// the journal so the report never invents "empty" input.
+			inspect := state["inspect"]
+			if inspect == "" {
+				inspect = ctx.Previous("inspect")
+			}
+			review := state["review"]
+			if review == "" {
+				review = ctx.Previous("review")
+			}
 			report, err := ctx.Agent(fmt.Sprintf(`Write a short review report for the repository.
 Use only these findings; do not invent new ones.
 
@@ -83,7 +94,7 @@ Inspection:
 %s
 
 Reviews:
-%s`, state["inspect"], state["review"]))
+%s`, inspect, review))
 			if err != nil {
 				return "", err
 			}
@@ -122,7 +133,7 @@ Reviews:
 		}
 		fmt.Println(result.Render())
 		fmt.Println()
-		if report, ok := state["report"]; ok {
+		if report, ok := result.Output["report"]; ok {
 			fmt.Println(report)
 		} else {
 			fmt.Println("(no report)")

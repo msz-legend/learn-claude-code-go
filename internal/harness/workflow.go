@@ -63,6 +63,7 @@ func (r WorkflowResult) Render() string {
 type workflowState struct {
 	mu      sync.Mutex
 	agents  map[string]string
+	outputs map[string]string // completed step outputs, seeded from the journal
 	journal string
 	events  []string
 }
@@ -148,6 +149,17 @@ func (c *WorkflowContext) Phase(title string) {
 	fmt.Println("[workflow] phase: " + title)
 }
 
+// Previous returns a completed step's journaled output ("", if absent).
+// On a resumed run this carries outputs of steps that were not re-executed.
+func (c *WorkflowContext) Previous(step string) string {
+	if c.state == nil {
+		return ""
+	}
+	c.state.mu.Lock()
+	defer c.state.mu.Unlock()
+	return c.state.outputs[step]
+}
+
 func (c *WorkflowContext) Log(message string) {
 	c.state.event("log " + message)
 	fmt.Println("[workflow] " + message)
@@ -185,7 +197,7 @@ func (r *WorkflowRunner) Run(runID string) (WorkflowResult, error) {
 	}
 	journal := filepath.Join(dir, "journal.jsonl")
 	completed, agents := loadWorkflowJournal(journal)
-	state := &workflowState{agents: agents, journal: journal, events: []string{}}
+	state := &workflowState{agents: agents, outputs: completed, journal: journal, events: []string{}}
 
 	results := []WorkflowStepResult{}
 	output := map[string]string{}
