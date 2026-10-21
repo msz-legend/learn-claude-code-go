@@ -1,0 +1,7 @@
+{
+  "servers": {
+    "demo": {
+      "command": ["go", "run", "./s14_mcp_plugin/demo"]
+    }
+  }
+}

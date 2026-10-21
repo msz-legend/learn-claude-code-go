@@ -1,0 +1,10 @@
+.env
+bin/
+*.exe
+.tasks/
+.memory/
+.cron/
+.compact/
+.team/
+.workflows/
+.worktrees/
